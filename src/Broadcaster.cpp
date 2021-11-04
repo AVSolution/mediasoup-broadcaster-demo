@@ -1,3 +1,4 @@
+#define MSC_CLASS "Broadcaster"
 #include "Broadcaster.hpp"
 #include "MediaStreamTrackFactory.hpp"
 #include "mediasoupclient.hpp"
@@ -75,6 +76,7 @@ std::future<void> Broadcaster::OnConnectSendTransport(const json& dtlsParameters
 	           cpr::VerifySsl{ verifySsl })
 	           .get();
 
+	MSC_DEBUG("request : %s\n  response: %s ", (baseUrl + "/transports/connect: " + body.dump()).c_str(), r.text.c_str());
 	if (r.status_code == 200)
 	{
 		promise.set_value();
@@ -108,6 +110,8 @@ std::future<void> Broadcaster::OnConnectRecvTransport(const json& dtlsParameters
 	           cpr::Header{ { "Content-Type", "application/json" } },
 	           cpr::VerifySsl{ verifySsl })
 	           .get();
+
+	MSC_DEBUG("request : %s \n response: %s ", (baseUrl + "/transports/connect" +body.dump()).c_str(), r.text.c_str());
 
 	if (r.status_code == 200)
 	{
@@ -172,6 +176,8 @@ std::future<std::string> Broadcaster::OnProduce(
 	           cpr::VerifySsl{ verifySsl })
 	           .get();
 
+	MSC_DEBUG("request : %s \n response: %s ", (baseUrl + "/transports/producers"+body.dump()).c_str(), r.text.c_str());
+
 	if (r.status_code == 200)
 	{
 		auto response = json::parse(r.text);
@@ -200,7 +206,7 @@ std::future<std::string> Broadcaster::OnProduce(
  * Fired when a data producer needs to be created in mediasoup.
  * Retrieve the remote producer ID and feed the caller with it.
  */
-std::future<std::string> Broadcaster::OnProduceData(
+std::future<std::string> Broadcaster::OnProduceData(//invalid request
   mediasoupclient::SendTransport* /*transport*/,
   const json& sctpStreamParameters,
   const std::string& label,
@@ -229,6 +235,8 @@ std::future<std::string> Broadcaster::OnProduceData(
 	           cpr::Header{ { "Content-Type", "application/json" } },
 	           cpr::VerifySsl{ verifySsl })
 	           .get();
+
+	MSC_DEBUG("request : %s \n response: %s ", (baseUrl + "/transports/produce/data" +body.dump()).c_str(), r.text.c_str());
 
 	if (r.status_code == 200)
 	{
@@ -303,6 +311,8 @@ void Broadcaster::Start(
 		return;
 	}
 
+	MSC_DEBUG("request : %s \n response: %s ", (baseUrl + "/broadcasters" + body.dump()).c_str(), r.text.c_str());
+
 	this->CreateSendTransport(enableAudio, useSimulcast);
 	this->CreateRecvTransport();
 }
@@ -331,8 +341,10 @@ void Broadcaster::CreateDataConsumer()
 		          << " [status code:" << r.status_code << ", body:\"" << r.text << "\"]" << std::endl;
 		return;
 	}
+	MSC_DEBUG("request : %s \n response: %s", (baseUrl + "/consume/data" + body.dump()).c_str(), r.text.c_str());
 
 	auto response = json::parse(r.text);
+	//response["streamId"] = "290338fe-b44a-4c22-a5de-ac6e1742822b";
 	if (response.find("id") == response.end())
 	{
 		std::cerr << "[ERROR] 'id' missing in response" << std::endl;
@@ -362,6 +374,8 @@ void Broadcaster::CreateSendTransport(bool enableAudio, bool useSimulcast)
 	{
 		{ "type",    "webrtc" },
 		{ "rtcpMux", true     },
+		{"producing",true},
+		{"consuming",false},
 		{ "sctpCapabilities", sctpCapabilities }
 	};
 	/* clang-format on */
@@ -380,6 +394,8 @@ void Broadcaster::CreateSendTransport(bool enableAudio, bool useSimulcast)
 
 		return;
 	}
+
+	MSC_DEBUG("request : %s \n  response: %s ", (baseUrl + "/broadcasters/id/transports" + body.dump()).c_str(), r.text.c_str());
 
 	auto response = json::parse(r.text);
 
@@ -430,7 +446,7 @@ void Broadcaster::CreateSendTransport(bool enableAudio, bool useSimulcast)
 
 	if (enableAudio && this->device.CanProduce("audio"))
 	{
-		auto audioTrack = createAudioTrack(std::to_string(rtc::CreateRandomId()));
+		auto audioTrack = createCaptureAudioTrack(std::to_string(rtc::CreateRandomId()));
 
 		/* clang-format off */
 		json codecOptions = {
@@ -439,7 +455,19 @@ void Broadcaster::CreateSendTransport(bool enableAudio, bool useSimulcast)
 		};
 		/* clang-format on */
 
-		this->sendTransport->Produce(this, audioTrack, nullptr, &codecOptions);
+		audioProducer = this->sendTransport->Produce(this, audioTrack, nullptr, &codecOptions);
+		MSC_DEBUG("%s", "====Produce Audio success..");
+
+		uint32_t intervalSeconds = 10;
+		std::thread([this, intervalSeconds]() {
+			bool run = true;
+			while (run)
+			{
+				json videostats = audioProducer->GetStats();
+				MSC_DEBUG("audio stats: %s", videostats.dump().c_str());
+				run = timerKiller.WaitFor(std::chrono::seconds(intervalSeconds));
+			}
+		}).detach();
 	}
 	else
 	{
@@ -450,7 +478,7 @@ void Broadcaster::CreateSendTransport(bool enableAudio, bool useSimulcast)
 
 	if (this->device.CanProduce("video"))
 	{
-		auto videoTrack = createSquaresVideoTrack(std::to_string(rtc::CreateRandomId()));
+		auto videoTrack = createVideoTrack(std::to_string(rtc::CreateRandomId()));
 
 		if (useSimulcast)
 		{
@@ -504,6 +532,8 @@ void Broadcaster::CreateRecvTransport()
 	{
 		{ "type",    "webrtc" },
 		{ "rtcpMux", true     },
+		{"producing",false},
+		{"consuming",true},
 		{ "sctpCapabilities", sctpCapabilities }
 	};
 	/* clang-format on */
@@ -523,6 +553,8 @@ void Broadcaster::CreateRecvTransport()
 
 		return;
 	}
+
+	MSC_DEBUG("request : %s \n response: %s \n", (baseUrl + "/broadcaster/id/transports" + body.dump()).c_str(), r.text.c_str());
 
 	auto response = json::parse(r.text);
 

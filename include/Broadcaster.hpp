@@ -105,6 +105,7 @@ private:
 	mediasoupclient::RecvTransport* recvTransport{ nullptr };
 	mediasoupclient::DataProducer* dataProducer{ nullptr };
 	mediasoupclient::DataConsumer* dataConsumer{ nullptr };
+	mediasoupclient::Producer* audioProducer{ nullptr };
 
 	std::string id = std::to_string(rtc::CreateRandomId());
 	std::string baseUrl;

@@ -17,6 +17,7 @@
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
+#include "rtc_base/logging.h"
 
 // Audio sample value that is high enough that it doesn't occur naturally when
 // frames are being faked. E.g. NetEq will not generate this large sample value
@@ -46,8 +47,10 @@ FakeAudioCaptureModule::FakeAudioCaptureModule()
       rec_is_initialized_(false),
       current_mic_level_(kMaxVolume),
       started_(false),
-      next_frame_time_(0),
-      frames_received_(0) {}
+      next_frame_time_(0), frames_received_(0)
+{
+	RTC_LOG_F(LS_INFO);
+}
 
 FakeAudioCaptureModule::~FakeAudioCaptureModule() {
   if (process_thread_) {
@@ -77,12 +80,14 @@ int32_t FakeAudioCaptureModule::ActiveAudioLayer(
 
 int32_t FakeAudioCaptureModule::RegisterAudioCallback(
     webrtc::AudioTransport* audio_callback) {
+	RTC_LOG_F(LS_INFO);
   rtc::CritScope cs(&crit_callback_);
   audio_callback_ = audio_callback;
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::Init() {
+	RTC_LOG_F(LS_INFO);
   // Initialize is called by the factory method. Safe to ignore this Init call.
   return 0;
 }
@@ -125,10 +130,12 @@ int32_t FakeAudioCaptureModule::RecordingDeviceName(
 
 int32_t FakeAudioCaptureModule::SetPlayoutDevice(uint16_t /*index*/) {
   // No playout device, just playing from file. Return success.
+  RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::SetPlayoutDevice(WindowsDeviceType /*device*/) {
+	RTC_LOG_F(LS_INFO);
   if (play_is_initialized_) {
     return -1;
   }
@@ -137,11 +144,13 @@ int32_t FakeAudioCaptureModule::SetPlayoutDevice(WindowsDeviceType /*device*/) {
 
 int32_t FakeAudioCaptureModule::SetRecordingDevice(uint16_t /*index*/) {
   // No recording device, just dropping audio. Return success.
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
-int32_t FakeAudioCaptureModule::SetRecordingDevice(
-    WindowsDeviceType /*device*/) {
+int32_t FakeAudioCaptureModule::SetRecordingDevice(WindowsDeviceType /*device*/)
+{
+	RTC_LOG_F(LS_INFO);
   if (rec_is_initialized_) {
     return -1;
   }
@@ -206,21 +215,23 @@ bool FakeAudioCaptureModule::Playing() const {
 }
 
 int32_t FakeAudioCaptureModule::StartRecording() {
-  if (!rec_is_initialized_) {
-    return -1;
-  }
-  {
-    rtc::CritScope cs(&crit_);
-    recording_ = true;
-  }
-  bool start = true;
-  UpdateProcessing(start);
-  return 0;
+	RTC_LOG_F(LS_INFO);
+	if (!rec_is_initialized_){
+		return -1;
+	}
+	{
+		rtc::CritScope cs(&crit_);
+		recording_ = true;
+	}
+	bool start = true;
+	UpdateProcessing(start);
+	return 0;
 }
 
 int32_t FakeAudioCaptureModule::StopRecording() {
   bool start = false;
   {
+	RTC_LOG_F(LS_INFO);
     rtc::CritScope cs(&crit_);
     recording_ = false;
     start = ShouldStartProcessing();
@@ -405,6 +416,7 @@ bool FakeAudioCaptureModule::Initialize() {
   // remote side unless a packet containing a sample of that magnitude has been
   // sent to it. Note that the audio processing pipeline will likely distort the
   // original signal.
+	RTC_LOG_F(LS_INFO);
   SetSendBuffer(kHighSampleValue);
   return true;
 }
