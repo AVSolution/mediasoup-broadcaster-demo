@@ -122,6 +122,7 @@ rtc::scoped_refptr<webrtc::AudioTrackInterface> createAudioTrack(const std::stri
 	options.highpass_filter = false;
 	options.echo_cancellation = false;
 
+	
 	rtc::scoped_refptr<webrtc::AudioSourceInterface> source = factory->CreateAudioSource(options);
 
 	return factory->CreateAudioTrack(label, source);
@@ -133,7 +134,8 @@ rtc::scoped_refptr<webrtc::AudioTrackInterface> createCaptureAudioTrack(const st
 		createFactory();
 
 	cricket::AudioOptions options;
-	options.highpass_filter = false;
+	options.highpass_filter   = false;
+	options.echo_cancellation = false;
 
 	rtc::scoped_refptr<webrtc::AudioTrackInterface> audio_track(
 	  factory->CreateAudioTrack(
@@ -184,6 +186,11 @@ rtc::scoped_refptr<webrtc::VideoTrackInterface> createSquaresVideoTrack(const st
 
 	std::cout << "[INFO] creating video track" << std::endl;
 	return factory->CreateVideoTrack(rtc::CreateRandomUuid(), videoTrackSource);
+}
+
+void destoryFactory()
+{
+	factory = nullptr;
 }
 
 namespace ADM

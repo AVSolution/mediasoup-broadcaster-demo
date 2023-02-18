@@ -122,14 +122,14 @@ class FakeAudioCaptureModule : public webrtc::AudioDeviceModule,
 
   int32_t PlayoutDelay(uint16_t* delay_ms) const override;
 
-  bool BuiltInAECIsAvailable() const override { return false; }
-  int32_t EnableBuiltInAEC(bool enable) override { return -1; }
-  bool BuiltInAGCIsAvailable() const override { return false; }
-  int32_t EnableBuiltInAGC(bool enable) override { return -1; }
-  bool BuiltInNSIsAvailable() const override { return false; }
-  int32_t EnableBuiltInNS(bool enable) override { return -1; }
+  bool BuiltInAECIsAvailable() const override; // { return false; }
+  int32_t EnableBuiltInAEC(bool enable) override;// { return -1; }
+	bool BuiltInAGCIsAvailable() const override;    //{ return false; }
+	int32_t EnableBuiltInAGC(bool enable) override; // { return -1; }
+	bool BuiltInNSIsAvailable() const override;     //{ return false; }
+	int32_t EnableBuiltInNS(bool enable) override;  //{ return -1; }
 
-  int32_t GetPlayoutUnderrunCount() const override { return -1; }
+  int32_t GetPlayoutUnderrunCount() const override; //{ return -1; }
 #if defined(WEBRTC_IOS)
   int GetPlayoutAudioParameters(
       webrtc::AudioParameters* params) const override {

@@ -13,6 +13,8 @@ rtc::scoped_refptr<webrtc::VideoTrackInterface> createCaptureVideoTrack(const st
 
 rtc::scoped_refptr<webrtc::AudioTrackInterface> createCaptureAudioTrack(const std::string& label);
 
+void destoryFactory();
+
 namespace ADM
 {
 void mute(bool muted) ;

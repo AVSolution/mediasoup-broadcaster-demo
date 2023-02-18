@@ -93,22 +93,26 @@ int32_t FakeAudioCaptureModule::Init() {
 }
 
 int32_t FakeAudioCaptureModule::Terminate() {
-  // Clean up in the destructor. No action here, just success.
+	// Clean up in the destructor. No action here, just success.
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 bool FakeAudioCaptureModule::Initialized() const {
-  RTC_NOTREACHED();
+	RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int16_t FakeAudioCaptureModule::PlayoutDevices() {
-  RTC_NOTREACHED();
+	RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int16_t FakeAudioCaptureModule::RecordingDevices() {
-  RTC_NOTREACHED();
+	RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
@@ -116,7 +120,8 @@ int32_t FakeAudioCaptureModule::PlayoutDeviceName(
     uint16_t /*index*/,
     char /*name*/[webrtc::kAdmMaxDeviceNameSize],
     char /*guid*/[webrtc::kAdmMaxGuidSize]) {
-  RTC_NOTREACHED();
+	RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
@@ -124,7 +129,8 @@ int32_t FakeAudioCaptureModule::RecordingDeviceName(
     uint16_t /*index*/,
     char /*name*/[webrtc::kAdmMaxDeviceNameSize],
     char /*guid*/[webrtc::kAdmMaxGuidSize]) {
-  RTC_NOTREACHED();
+	RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
@@ -158,34 +164,47 @@ int32_t FakeAudioCaptureModule::SetRecordingDevice(WindowsDeviceType /*device*/)
 }
 
 int32_t FakeAudioCaptureModule::PlayoutIsAvailable(bool* /*available*/) {
-  RTC_NOTREACHED();
+	RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
-int32_t FakeAudioCaptureModule::InitPlayout() {
+int32_t FakeAudioCaptureModule::InitPlayout()
+{
+	RTC_LOG_F(LS_INFO);
   play_is_initialized_ = true;
   return 0;
 }
 
-bool FakeAudioCaptureModule::PlayoutIsInitialized() const {
+bool FakeAudioCaptureModule::PlayoutIsInitialized() const
+{
+	RTC_LOG_F(LS_INFO);
   return play_is_initialized_;
 }
 
-int32_t FakeAudioCaptureModule::RecordingIsAvailable(bool* /*available*/) {
+int32_t FakeAudioCaptureModule::RecordingIsAvailable(bool* /*available*/)
+{
+	RTC_LOG_F(LS_INFO);
   RTC_NOTREACHED();
   return 0;
 }
 
-int32_t FakeAudioCaptureModule::InitRecording() {
+int32_t FakeAudioCaptureModule::InitRecording()
+{
+	RTC_LOG_F(LS_INFO);
   rec_is_initialized_ = true;
   return 0;
 }
 
-bool FakeAudioCaptureModule::RecordingIsInitialized() const {
+bool FakeAudioCaptureModule::RecordingIsInitialized() const
+{
+	RTC_LOG_F(LS_INFO);
   return rec_is_initialized_;
 }
 
-int32_t FakeAudioCaptureModule::StartPlayout() {
+int32_t FakeAudioCaptureModule::StartPlayout()
+{
+	RTC_LOG_F(LS_INFO);
   if (!play_is_initialized_) {
     return -1;
   }
@@ -198,7 +217,9 @@ int32_t FakeAudioCaptureModule::StartPlayout() {
   return 0;
 }
 
-int32_t FakeAudioCaptureModule::StopPlayout() {
+int32_t FakeAudioCaptureModule::StopPlayout()
+{
+	RTC_LOG_F(LS_INFO);
   bool start = false;
   {
     rtc::CritScope cs(&crit_);
@@ -209,7 +230,9 @@ int32_t FakeAudioCaptureModule::StopPlayout() {
   return 0;
 }
 
-bool FakeAudioCaptureModule::Playing() const {
+bool FakeAudioCaptureModule::Playing() const
+{
+	RTC_LOG_F(LS_INFO);
   rtc::CritScope cs(&crit_);
   return playing_;
 }
@@ -228,10 +251,11 @@ int32_t FakeAudioCaptureModule::StartRecording() {
 	return 0;
 }
 
-int32_t FakeAudioCaptureModule::StopRecording() {
+int32_t FakeAudioCaptureModule::StopRecording()
+{
+	RTC_LOG_F(LS_INFO);
   bool start = false;
   {
-	RTC_LOG_F(LS_INFO);
     rtc::CritScope cs(&crit_);
     recording_ = false;
     start = ShouldStartProcessing();
@@ -240,71 +264,87 @@ int32_t FakeAudioCaptureModule::StopRecording() {
   return 0;
 }
 
-bool FakeAudioCaptureModule::Recording() const {
+bool FakeAudioCaptureModule::Recording() const
+{
+	RTC_LOG_F(LS_INFO);
   rtc::CritScope cs(&crit_);
   return recording_;
 }
 
 int32_t FakeAudioCaptureModule::InitSpeaker() {
+	RTC_LOG_F(LS_INFO);
   // No speaker, just playing from file. Return success.
   return 0;
 }
 
 bool FakeAudioCaptureModule::SpeakerIsInitialized() const {
   RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::InitMicrophone() {
   // No microphone, just playing from file. Return success.
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 bool FakeAudioCaptureModule::MicrophoneIsInitialized() const {
   RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::SpeakerVolumeIsAvailable(bool* /*available*/) {
   RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::SetSpeakerVolume(uint32_t /*volume*/) {
   RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::SpeakerVolume(uint32_t* /*volume*/) const {
   RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::MaxSpeakerVolume(
     uint32_t* /*max_volume*/) const {
   RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::MinSpeakerVolume(
     uint32_t* /*min_volume*/) const {
   RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::MicrophoneVolumeIsAvailable(
     bool* /*available*/) {
-  RTC_NOTREACHED();
+	RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
-int32_t FakeAudioCaptureModule::SetMicrophoneVolume(uint32_t volume) {
-  rtc::CritScope cs(&crit_);
+int32_t FakeAudioCaptureModule::SetMicrophoneVolume(uint32_t volume)
+{
+	RTC_LOG_F(LS_INFO);
+	rtc::CritScope cs(&crit_);
   current_mic_level_ = volume;
   return 0;
 }
 
-int32_t FakeAudioCaptureModule::MicrophoneVolume(uint32_t* volume) const {
+int32_t FakeAudioCaptureModule::MicrophoneVolume(uint32_t* volume) const
+{
+	RTC_LOG_F(LS_INFO);
   rtc::CritScope cs(&crit_);
   *volume = current_mic_level_;
   return 0;
@@ -312,42 +352,50 @@ int32_t FakeAudioCaptureModule::MicrophoneVolume(uint32_t* volume) const {
 
 int32_t FakeAudioCaptureModule::MaxMicrophoneVolume(
     uint32_t* max_volume) const {
+	RTC_LOG_F(LS_INFO);
   *max_volume = kMaxVolume;
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::MinMicrophoneVolume(
     uint32_t* /*min_volume*/) const {
+	RTC_LOG_F(LS_INFO);
   RTC_NOTREACHED();
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::SpeakerMuteIsAvailable(bool* /*available*/) {
+	RTC_LOG_F(LS_INFO);
   RTC_NOTREACHED();
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::SetSpeakerMute(bool /*enable*/) {
+	RTC_LOG_F(LS_INFO);
   RTC_NOTREACHED();
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::SpeakerMute(bool* /*enabled*/) const {
+	RTC_LOG_F(LS_INFO);
   RTC_NOTREACHED();
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::MicrophoneMuteIsAvailable(bool* /*available*/) {
+	RTC_LOG_F(LS_INFO);
   RTC_NOTREACHED();
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::SetMicrophoneMute(bool /*enable*/) {
-  RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
+    RTC_NOTREACHED();
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::MicrophoneMute(bool* /*enabled*/) const {
+	RTC_LOG_F(LS_INFO);
   RTC_NOTREACHED();
   return 0;
 }
@@ -356,6 +404,7 @@ int32_t FakeAudioCaptureModule::StereoPlayoutIsAvailable(
     bool* available) const {
   // No recording device, just dropping audio. Stereo can be dropped just
   // as easily as mono.
+	RTC_LOG_F(LS_INFO);
   *available = true;
   return 0;
 }
@@ -363,22 +412,26 @@ int32_t FakeAudioCaptureModule::StereoPlayoutIsAvailable(
 int32_t FakeAudioCaptureModule::SetStereoPlayout(bool /*enable*/) {
   // No recording device, just dropping audio. Stereo can be dropped just
   // as easily as mono.
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::StereoPlayout(bool* /*enabled*/) const {
   RTC_NOTREACHED();
+	RTC_LOG_F(LS_INFO);
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::StereoRecordingIsAvailable(
     bool* available) const {
   // Keep thing simple. No stereo recording.
+	RTC_LOG_F(LS_INFO);
   *available = false;
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::SetStereoRecording(bool enable) {
+	RTC_LOG_F(LS_INFO);
   if (!enable) {
     return 0;
   }
@@ -386,17 +439,57 @@ int32_t FakeAudioCaptureModule::SetStereoRecording(bool enable) {
 }
 
 int32_t FakeAudioCaptureModule::StereoRecording(bool* /*enabled*/) const {
+	RTC_LOG_F(LS_INFO);
   RTC_NOTREACHED();
   return 0;
 }
 
 int32_t FakeAudioCaptureModule::PlayoutDelay(uint16_t* delay_ms) const {
   // No delay since audio frames are dropped.
+	RTC_LOG_F(LS_INFO);
   *delay_ms = 0;
   return 0;
 }
 
+bool FakeAudioCaptureModule::BuiltInAECIsAvailable() const 
+{
+	RTC_LOG_F(LS_INFO);
+	return false;
+}
+int32_t FakeAudioCaptureModule::EnableBuiltInAEC(bool enable) 
+{
+	RTC_LOG_F(LS_INFO);
+	return -1;
+}
+bool FakeAudioCaptureModule::BuiltInAGCIsAvailable() const 
+{
+	RTC_LOG_F(LS_INFO);
+	return false;
+}
+int32_t FakeAudioCaptureModule::EnableBuiltInAGC(bool enable) 
+{
+	RTC_LOG_F(LS_INFO);
+	return -1;
+}
+bool FakeAudioCaptureModule::BuiltInNSIsAvailable() const 
+{
+	RTC_LOG_F(LS_INFO);
+	return false;
+}
+int32_t FakeAudioCaptureModule::EnableBuiltInNS(bool enable) 
+{
+	RTC_LOG_F(LS_INFO);
+	return -1;
+}
+
+int32_t FakeAudioCaptureModule::GetPlayoutUnderrunCount() const
+{
+	RTC_LOG_F(LS_INFO);
+	return -1;
+}
+
 void FakeAudioCaptureModule::OnMessage(rtc::Message* msg) {
+	RTC_LOG_F(LS_INFO);
   switch (msg->message_id) {
     case MSG_START_PROCESS:
       StartProcessP();
@@ -422,6 +515,7 @@ bool FakeAudioCaptureModule::Initialize() {
 }
 
 void FakeAudioCaptureModule::SetSendBuffer(int value) {
+	RTC_LOG_F(LS_INFO);
   Sample* buffer_ptr = reinterpret_cast<Sample*>(send_buffer_);
   const size_t buffer_size_in_samples =
       sizeof(send_buffer_) / kNumberBytesPerSample;
@@ -431,10 +525,12 @@ void FakeAudioCaptureModule::SetSendBuffer(int value) {
 }
 
 void FakeAudioCaptureModule::ResetRecBuffer() {
+	RTC_LOG_F(LS_INFO);
   memset(rec_buffer_, 0, sizeof(rec_buffer_));
 }
 
 bool FakeAudioCaptureModule::CheckRecBuffer(int value) {
+	RTC_LOG_F(LS_INFO);
   const Sample* buffer_ptr = reinterpret_cast<const Sample*>(rec_buffer_);
   const size_t buffer_size_in_samples =
       sizeof(rec_buffer_) / kNumberBytesPerSample;
@@ -446,10 +542,12 @@ bool FakeAudioCaptureModule::CheckRecBuffer(int value) {
 }
 
 bool FakeAudioCaptureModule::ShouldStartProcessing() {
+	RTC_LOG_F(LS_INFO);
   return recording_ || playing_;
 }
 
 void FakeAudioCaptureModule::UpdateProcessing(bool start) {
+	RTC_LOG_F(LS_INFO);
   if (start) {
     if (!process_thread_) {
       process_thread_ = rtc::Thread::Create();
@@ -466,6 +564,7 @@ void FakeAudioCaptureModule::UpdateProcessing(bool start) {
 }
 
 void FakeAudioCaptureModule::StartProcessP() {
+	RTC_LOG_F(LS_INFO);
   RTC_CHECK(process_thread_->IsCurrent());
   if (started_) {
     // Already started.
@@ -475,6 +574,7 @@ void FakeAudioCaptureModule::StartProcessP() {
 }
 
 void FakeAudioCaptureModule::ProcessFrameP() {
+	RTC_LOG_F(LS_INFO);
   RTC_CHECK(process_thread_->IsCurrent());
   if (!started_) {
     next_frame_time_ = rtc::TimeMillis();
@@ -500,6 +600,7 @@ void FakeAudioCaptureModule::ProcessFrameP() {
 }
 
 void FakeAudioCaptureModule::ReceiveFrameP() {
+	RTC_LOG_F(LS_INFO);
   RTC_CHECK(process_thread_->IsCurrent());
   {
     rtc::CritScope cs(&crit_callback_);
@@ -531,6 +632,7 @@ void FakeAudioCaptureModule::ReceiveFrameP() {
 }
 
 void FakeAudioCaptureModule::SendFrameP() {
+	RTC_LOG_F(LS_INFO);
   RTC_CHECK(process_thread_->IsCurrent());
   rtc::CritScope cs(&crit_callback_);
   if (!audio_callback_) {
